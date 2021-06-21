@@ -1,46 +1,53 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
 import Cardlist from '../components/Cardlist';  
 import Searchbox from '../components/Searchbox';
 import './App.css';
 import Scroll from '../components/Scroll';
 import ErrorBoundry from '../components/ErrorBoundry';
+import { setSearchField, requestRobots} from '../action.js';
+
+
+const mapStateToProps =state=>
+{
+    return {
+        searchField:state.searchRobots.searchField,
+        robots:state.requestRobots.robots,
+        isPending:state.requestRobots.isPending,
+        error:state.requestRobots.error
+    }
+}
+
+
+const mapDispatchToProps=(dispatch)=>{
+    return{
+        onsearchchange:(event)=> dispatch(setSearchField(event.target.value)),
+      onRequestRobots:()=> dispatch(requestRobots())     
+    }
+}
 
  class App extends Component{
- 	constructor(){
- 		super()
- 		this.state={
- 			robot:[],
- 			Searchfield:''
- 		}
-}        
+ 	 
+     
 
          componentDidMount(){
-         	fetch('https://jsonplaceholder.typicode.com/users')
-         	.then(response =>  response.json())
-            .then(users => this.setState({robot:users}));
+         	this.props.onRequestRobots();
      
          }
 
- 		onsearchchange=(event) =>{
- 			this.setState({Searchfield:event.target.value})
- 			
- 		
- 		}
- 		
-
  	render(){
-        const {robot,Searchfield}=this.state;
- 		const filteredrobot=robot.filter(robot=> {
- 				return robot.name.toLowerCase().includes(Searchfield.toLowerCase());
+        const {searchField,onsearchchange,robots,isPending}=this.props;
+ 		const filteredrobot=robots.filter(robots=> {
+ 				return robots.name.toLowerCase().includes(searchField.toLowerCase());
              })
-             return !robot.length ? 
+             return isPending ? 
              	 <h1>Loading</h1>:
 
               
                 (
  		<div className='tc'>
  		<h1 className='f1'>Robofriends</h1>
- 		<Searchbox searchChange={this.onsearchchange} />
+ 		<Searchbox searchChange={onsearchchange} />
  		   <Scroll>  
                <ErrorBoundry>
  		       <Cardlist robot={filteredrobot}/>
@@ -51,4 +58,4 @@ import ErrorBoundry from '../components/ErrorBoundry';
  	
  }
 }
-export default App;
+export default connect(mapStateToProps,mapDispatchToProps)(App);

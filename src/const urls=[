@@ -1,0 +1,64 @@
+const urls=[
+'https://jsonplaceholder.typicode.com/posts',
+'https://jsonplaceholder.typicode.com/albums',
+'https://jsonplaceholder.typicode.com/photos'
+]
+const getdata=async function(){
+try{
+const  [posts,albums,photos]=await Promise.all(urls.map(url=>{
+	return fetch(url).then(resp=>resp.json())
+}))
+console.log(posts)
+console.log(albums)
+console.log(photos)
+	
+}catch(err){
+	console.log('oops'.err);
+	}
+}
+
+const loop=url=>{
+	for(url of urls){
+	console.log(url)
+	}
+}
+
+
+const animals={
+	tiger:57,
+	lion:99,
+	bird: 23,
+	monkey:32
+}
+const{tiger,lion,...rest}=animals;
+
+
+
+function objectspread(p1,p2,p3){
+	console.log(p1)
+	console.log(p2)
+	console.log(p3)
+
+}
+objectspread(tiger,lion,rest);
+
+ Promise.all(urls.map(url=>{
+	return fetch(url).then(resp=>resp.json())
+}))
+.then(a=>{
+throw Error;
+console.log(a[0])
+console.log(a[1])
+console.log(a[2])
+})
+.catch(err=>console.log('ugg fix it',err))
+.finally(()=>console.log('extra'));
+
+
+const getdata2=async function(){
+	const arrayofpromises=urls.map(url=>fetch(url));
+	for await(let request of arrayofpromises){
+	const data=await request.json();
+	console.log(data);
+	}
+}
